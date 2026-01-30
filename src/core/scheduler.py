@@ -6,7 +6,7 @@ class Scheduler:
 
     def __init__(self):
         self.lines = []
-        self.jobs = []
+        self.job_map = {}
 
     @property
     def n_jobs(self):
@@ -19,5 +19,8 @@ class Scheduler:
     def add_line(self, line):
         self.lines.append(line)
 
-    def add_job(self, job):
-        self.jobs.append(job)
+    def add_job(self, job_id, job):
+        assert (
+            not job_id in self.job_map.keys()
+        ), "job_id={0}はすでに存在します.".format(job_id)
+        self.job_map[job_id] = job

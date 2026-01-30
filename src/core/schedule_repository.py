@@ -23,7 +23,7 @@ class ScheduleRepository:
         for line in self._read_lines():
             scheduler.add_line(line)
 
-        for job in self._read_jobs():
+        for job in self._read_job_map():
             scheduler.add_job(job)
 
         return scheduler
@@ -36,72 +36,46 @@ class ScheduleRepository:
             lines.append(line)
         return lines
 
-    def _read_jobs(self):
+    def _read_job_map(self):
         jobs_df = self._read_jobs_df()
         prev_job_infos_df = self._read_prev_job_infos_df()
-        tasks_df = self._read_tasks_df()
-        prev_tasks_infos_df = self._read_prev_task_infos_df()
-        jobs = []
-        for job_info in jobs_df.itertuples():
-            job_id = job_info.Index
-            prev_job_ids = prev_job_infos_df.loc[
-                prev_job_infos_df["job_id"] == job_id, "prev_job_id"
-            ].tolist()
-            tasks = []
-            for task_info in tasks_df.loc[job_id].itertuples():
-                job_task_id = task_info.Index
-                prev_job_task_ids = prev_tasks_infos_df.loc[
-                    (prev_tasks_infos_df["job_id"] == job_id)
-                    * (prev_tasks_infos_df["job_task_id"] == job_task_id),
-                    "prev_job_task_id",
-                ].tolist()
-                task = Task(
-                    task_id=job_task_id,
-                    need_time_buckets=task_info.need_time_buckets,
-                    prev_job_task_ids=prev_job_task_ids,
-                    start_time_buckets_delta=0,
-                )
-                tasks.append(task)
-            job = Job(
-                job_id=job_id,
-                name=job_info.name,
-                need_time_buckets=job_info.need_time_buckets,
-                parent=parent,
-                start_time_backet_id=job_info.start_time_bucket_id,
-                assigned_line_id=job_info.assigned_line_id,
+        job_map = {
+            row.job_id: Job(
+                job_id=row.job_id,
+                name=row.name,
+                need_time_buckets=row.need_time_buckets,
             )
-            jobs.append(job)
-        return jobs
+            for row in jobs_df.itertuples()
+        }
+        job_map[0] = Job(job_id=0, name="root")
+
+        for row in jobs_df.itertuples():
+            job = job_map[row.job_id]
+            parent_job = job_map[row.parent_job_id]
+            job.parent = parent_job
+            parent_job.children.append(job)
+
+        for row in prev_job_infos_df.itertuples():
+            job_id = row.job_id
+            prev_job_id = row.prev_job_id
+            job: Job = job_map[job_id]
+            prev_job: Job = job_map[prev_job_id]
+            prev_job.successors.append(job)
+            job.predecessors.append(prev_job)
+
+        return job_map
 
     def _read_jobs_df(self):
         jobs_csv_path = os.path.join(self.repository_dir, self.JOBS_CSV_FILE_NAME)
-        jobs_df = pd.read_csv(jobs_csv_path, encoding="utf-8").set_index("job_id")
+        jobs_df = pd.read_csv(jobs_csv_path, encoding="utf-8")
         return jobs_df
 
     def _read_prev_job_infos_df(self):
         prev_job_infos_csv_path = os.path.join(
             self.repository_dir, self.PREV_JOB_INFOS_CSV_FILE_NAME
         )
-        prev_job_infos_df = pd.read_csv(
-            prev_job_infos_csv_path, encoding="utf-8"
-        ).set_index("prev_job_info_id")
+        prev_job_infos_df = pd.read_csv(prev_job_infos_csv_path, encoding="utf-8")
         return prev_job_infos_df
-
-    def _read_tasks_df(self):
-        tasks_csv_path = os.path.join(self.repository_dir, self.TASKS_CSV_FILE_NAME)
-        tasks_df = pd.read_csv(tasks_csv_path, encoding="utf-8").set_index(
-            ["job_id", "job_task_id"]
-        )
-        return tasks_df
-
-    def _read_prev_task_infos_df(self):
-        prev_task_infos_csv_path = os.path.join(
-            self.repository_dir, self.PREV_TASK_INFOS_CSV_FILE_NAME
-        )
-        prev_task_infos_df = pd.read_csv(
-            prev_task_infos_csv_path, encoding="utf-8"
-        ).set_index("prev_task_info_id")
-        return prev_task_infos_df
 
     def _read_lines_df(self):
         lines_csv_path = os.path.join(self.repository_dir, self.LINES_CSV_FILE_NAME)

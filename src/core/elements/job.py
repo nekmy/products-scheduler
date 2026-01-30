@@ -1,7 +1,10 @@
+from dataclasses import dataclass, field
+
 import numpy as np
-from typing import Self, Optional
+from typing import List, Optional
 
 
+@dataclass
 class Job:
     """
     スケジュールの要素単位であるジョブ
@@ -9,30 +12,22 @@ class Job:
     このクラスはあくまで開始タイムバケットを持つ
     """
 
-    def __init__(
-        self,
-        job_id: int,
-        name: str,
-        need_time_buckets: int,
-        parent: Optional[Self],  # 親job
-        children: list[Self],  # 子job
-        predecessors: list[Self],  # 前job
-        successors: list[Self],  # 後job
-        start_time_backet_id: int,
-        assigned_line_id: int,
-    ):
-        self.job_id = job_id
-        self.name = name
-        self.need_time_buckets = need_time_buckets
+    # --- 必須フィールド ---
+    job_id: int
+    name: str
+    # --- オプションフィールド（デフォルト値あり） ---
+    need_time_buckets: int = 0
+    start_time_backet_id: Optional[int] = None
+    assigned_line_id: Optional[int] = None
+    parent: Optional["Job"] = None  # 親job
 
-        self.parent = parent
-        self.children = children
-        self.predecessors = predecessors
-        self.successors = successors
+    # --- リストフィールド （初期化時は空）---
+    children: List["Job"] = field(default_factory=list, init=False)  # 子job
+    predecessors: List["Job"] = field(default_factory=list, init=False)  # 前job
+    successors: List["Job"] = field(default_factory=list, init=False)  # 後job
 
-        # temp_arrtibutes
-        self.start_time_bucket_id = start_time_backet_id
-        self.assigned_line_id = assigned_line_id
+    def __repr__(self):
+        return self.name
 
     @property
     def total_need_time_buckets(self):
@@ -44,7 +39,7 @@ class Job:
             ]
         )
 
-    def get_prev_tasks_matrix(self):
+    def get_prev_jobs_matrix(self):
         n_tasks = len(self.children)
         task_ids = [task.task_id for task in self.children]
         prev_tasks_matrix = np.zeros((n_tasks, n_tasks), dtype=bool)
