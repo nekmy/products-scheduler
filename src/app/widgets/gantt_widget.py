@@ -78,7 +78,7 @@ class GanttWidget(QWidget):
         super().__init__()
         self.scheduler = scheduler
         self.gantt_scene = GanttScene(
-            self.scheduler.n_lines,
+            self.scheduler.n_resources,
             self.TIME_BUCKET_WIDTH,
             self.LINE_HEIGHT,
             self.JOB_RECT_HEIGHT,
