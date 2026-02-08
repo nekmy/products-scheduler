@@ -36,7 +36,7 @@ class ScheduleRepository:
 
         job_map = self._read_job_map(scheduler.root_job)
         for job in job_map.values():
-            scheduler.add_job(job)
+            scheduler.load_jobs(job)
 
         return scheduler
 

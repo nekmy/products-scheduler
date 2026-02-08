@@ -26,7 +26,7 @@ class Job:
     children: List["Job"] = field(default_factory=list, init=False)  # 子job
     predecessors: List["Job"] = field(default_factory=list, init=False)  # 前job
     successors: List["Job"] = field(default_factory=list, init=False)  # 後job
-    required_recources: Dict["ResourceKind", int] = field(
+    required_recource_kinds: Dict["ResourceKind", int] = field(
         default_factory=dict, init=False
     )
     assigned_recources: Dict["Resource", int] = field(default_factory=dict, init=False)

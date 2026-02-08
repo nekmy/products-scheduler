@@ -1,7 +1,8 @@
-from typing import Optional
+from typing import Optional, List
 
 from core.elements.job import Job
 from core.elements.resource import ResourceKind, Resource
+from core.dto.job_info import JobInfo
 
 
 class Scheduler:
@@ -38,7 +39,7 @@ class Scheduler:
         ), "resource_id={0}はすでに存在します.".format(resource.resource_id)
         self._resources[resource.resource_id] = resource
 
-    def add_job(self, job: Job):
+    def load_jobs(self, job_infos: List[JobInfo]):
         assert not job.job_id in self._jobs, "job_id={0}はすでに存在します.".format(
             job.job_id
         )
