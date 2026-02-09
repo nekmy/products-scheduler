@@ -1,18 +1,25 @@
+from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import List
+from typing import TYPE_CHECKING, List, Any
 
-
-@dataclass
-class ResourceKind:
-    resource_kind_id: int
-    name: str
-    # --- リストフィールド （初期化時は空）---
-    resources: List["Resource"] = field(default_factory=list, init=False)
+if TYPE_CHECKING:
+    from core.elements.resource_group import ResourceGroup
 
 
 @dataclass
 class Resource:
     resource_id: int
     name: str
-    resource_kind: ResourceKind
     capacity: int
+    resource_groups: List[ResourceGroup] = field(default_factory=list, init=False)
+
+    def __repr__(self):
+        return self.name
+
+    def __hash__(self):
+        return hash(self.resource_id)
+
+    def __eq__(self, other: Any):
+        if not isinstance(other, Resource):
+            return NotImplemented
+        return self.resource_id == other.resource_id
