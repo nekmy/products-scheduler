@@ -78,19 +78,19 @@ class Scheduler:
             )
             # required_resource_group
             for (
-                required_recource_group_id,
+                required_resource_group_id,
                 amount,
-            ) in job_info.required_recource_group_ids.items():
+            ) in job_info.required_resource_group_ids.items():
                 required_resource_group = self._resource_groups[
-                    required_recource_group_id
+                    required_resource_group_id
                 ]
                 job.required_resource_groups[required_resource_group] = amount
             # assigned_resource
             for (
-                assigned_recource_id,
+                assigned_resource_id,
                 amount,
             ) in job_info.assigned_resource_ids.items():
-                assigned_resource = self._resources[assigned_recource_id]
+                assigned_resource = self._resources[assigned_resource_id]
                 job.assigned_resources[assigned_resource] = amount
             self._jobs[job_info.job_id] = job
 

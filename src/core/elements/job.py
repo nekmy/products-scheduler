@@ -22,7 +22,7 @@ class Job:
     name: str
     # --- オプションフィールド（デフォルト値あり） ---
     need_time_buckets: int = 0
-    start_time_backet_id: Optional[int] = None
+    start_time_bucket_id: Optional[int] = None
     parent: Optional["Job"] = None  # 親job
 
     # --- リストフィールド （初期化時は空）---

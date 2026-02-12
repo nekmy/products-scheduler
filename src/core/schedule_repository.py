@@ -90,7 +90,7 @@ class ScheduleRepository:
             for required_resource_group in job_required_resource_groups_df.loc[
                 job_required_resource_groups_df.job_id == job_info.job_id
             ].itertuples():
-                job_info.required_recource_group_ids[
+                job_info.required_resource_group_ids[
                     required_resource_group.resource_group_id
                 ] = required_resource_group.amount
 

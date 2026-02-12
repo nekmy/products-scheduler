@@ -52,7 +52,7 @@ class GanttScene(QGraphicsScene):
         :param self: 説明
         :param job: 説明
         """
-        x, y = self.id_to_pos(job.assigned_resources, job.start_time_backet_id)
+        x, y = self.id_to_pos(job.assigned_resources, job.start_time_bucket_id)
         w = job.total_need_time_buckets * self.time_bucket_width
         h = self.job_rect_height
         job_rect_item = JobRectItem(self, x, y, w, h, job.name)
