@@ -7,6 +7,7 @@ class JobInfo:
     # --- 必須フィールド ---
     job_id: int
     name: str
+
     # --- オプションフィールド（デフォルト値あり） ---
     need_time_buckets: int = 0
     parent_job_id: int = 0  # 親job
@@ -17,4 +18,3 @@ class JobInfo:
     required_resource_group_ids: Dict[int, int] = field(
         default_factory=dict, init=False
     )
-    assigned_resource_ids: Dict[int, int] = field(default_factory=dict, init=False)

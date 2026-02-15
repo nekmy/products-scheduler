@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, List, Dict, Optional
 import numpy as np
 
 if TYPE_CHECKING:
-    from core.elements.resource import Resource
     from core.elements.resource_group import ResourceGroup
+    from core.elements.operation import Operation
 
 
 @dataclass
@@ -32,7 +32,7 @@ class Job:
     required_resource_groups: Dict[ResourceGroup, int] = field(
         default_factory=dict, init=False
     )
-    assigned_resources: Dict[Resource, int] = field(default_factory=dict, init=False)
+    operations: List[Operation] = field(default_factory=list, init=False)
 
     def __repr__(self):
         return self.name

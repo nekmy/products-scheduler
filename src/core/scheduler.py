@@ -4,9 +4,11 @@ from utils.errors.data_integrity_error import DataIntegrityError
 from core.elements.resource_group import ResourceGroup
 from core.elements.resource import Resource
 from core.elements.job import Job
+from core.elements.operation import Operation
 from core.dto.resource_group_info import ResourceGroupInfo
 from core.dto.resource_info import ResourceInfo
 from core.dto.job_info import JobInfo
+from core.dto.operation_info import OperationInfo
 
 
 class Scheduler:
@@ -17,9 +19,10 @@ class Scheduler:
 
     def __init__(self):
         self.root_job = Job(job_id=0, name="root")
-        self._jobs: dict[int, Job] = {0: self.root_job}
         self._resource_groups: dict[int, ResourceGroup] = {}
         self._resources: dict[int, Resource] = {}
+        self._jobs: dict[int, Job] = {0: self.root_job}
+        self._operations: dict[int, Operation] = {}
 
     @property
     def n_jobs(self):
@@ -85,13 +88,6 @@ class Scheduler:
                     required_resource_group_id
                 ]
                 job.required_resource_groups[required_resource_group] = amount
-            # assigned_resource
-            for (
-                assigned_resource_id,
-                amount,
-            ) in job_info.assigned_resource_ids.items():
-                assigned_resource = self._resources[assigned_resource_id]
-                job.assigned_resources[assigned_resource] = amount
             self._jobs[job_info.job_id] = job
 
         # 親子関係の反映
@@ -116,6 +112,34 @@ class Scheduler:
                 prev_job = self._jobs[prev_job_id]
                 job.predecessors.append(prev_job)
                 prev_job.successors.append(job)
+
+        return None
+
+    def add_operations(self, operation_infos: List[OperationInfo]):
+        for operation_info in operation_infos:
+            operation_id = operation_info.operation_id
+            job = self._jobs[operation_info.job_id]
+            operation = Operation(
+                operation_id=operation_info.operation_id,
+                name=operation_info.name,
+                job=job,
+                sequence_num=operation_info.sequence_num,
+            )
+            # assigned_resource
+            for (
+                assigned_resource_id,
+                amount,
+            ) in operation_info.assigned_resource_ids.items():
+                assigned_resource = self._resources[assigned_resource_id]
+                operation.assigned_resources[assigned_resource] = amount
+            self._operations[operation_id] = operation
+            job.operations.append(operation)
+        # 親子関係の反映
+        for operation_info in operation_infos:
+            operation = self._operations[operation_info.operation_id]
+            parent_operation = self._operations[operation_info.operation_id]
+            operation.parent = parent_operation
+            parent_operation.children.append(operation)
 
         return None
 

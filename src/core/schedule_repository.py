@@ -8,6 +8,7 @@ from core.scheduler import Scheduler
 from core.dto.resource_info import ResourceInfo
 from core.dto.resource_group_info import ResourceGroupInfo
 from core.dto.job_info import JobInfo
+from core.dto.operation_info import OperationInfo
 
 
 class ScheduleRepository:
@@ -18,7 +19,8 @@ class ScheduleRepository:
     JOBS_CSV_FILE_NAME = "jobs.csv"
     JOB_ORDER_CONSTRAINTS_CSV_FILE_NAME = "job_order_constraints.csv"
     JOB_REQUIRED_RESOURCE_GROUPS_CSV_FILE_NAME = "job_required_resource_groups.csv"
-    JOB_ASSIGNED_RESOURCES_CSV_FILE_NAME = "job_assigned_resources.csv"
+    OPERATION_ASSIGNED_RESOURCES_CSV_FILE_NAME = "operation_assigned_resources.csv"
+    OPERATIONS_CSV_FILE_NAME = "operations.csv"
 
     def __init__(self, repository_dir):
         self.repository_dir = repository_dir
@@ -34,6 +36,9 @@ class ScheduleRepository:
 
         job_infos = self._load_job_infos()
         scheduler.add_jobs(job_infos)
+
+        operation_infos = self._load_operation_infos()
+        scheduler.add_operations(operation_infos)
 
         return scheduler
 
@@ -68,7 +73,7 @@ class ScheduleRepository:
         jobs_df = self._read_jobs_df()
         job_order_constraints_df = self._read_job_order_constraints_df()
         job_required_resource_groups_df = self._read_job_required_resource_groups_df()
-        job_assigned_resources_df = self._read_job_assigned_resources_df()
+        operation_assigned_resources_df = self._read_operation_assigned_resources_df()
 
         job_infos: List[JobInfo] = []
 
@@ -94,17 +99,37 @@ class ScheduleRepository:
                     required_resource_group.resource_group_id
                 ] = required_resource_group.amount
 
-            # assigned_resourceの格納
-            for assigned_resource in job_assigned_resources_df.loc[
-                job_assigned_resources_df.job_id == job_info.job_id
-            ].itertuples():
-                job_info.assigned_resource_ids[assigned_resource.resource_id] = (
-                    assigned_resource.amount
-                )
-
             job_infos.append(job_info)
 
         return job_infos
+
+    def _load_operation_infos(self):
+        operations_df = self._read_operations_df()
+        operation_assigned_resources_df = self._read_operation_assigned_resources_df()
+        operation_infos: List[OperationInfo] = []
+
+        for row in operations_df.itertuples():
+            operation_info = OperationInfo(
+                operation_id=row.operation_id,
+                name=row.name,
+                parent_id=row.parent_operation_id,
+                operation_type_id=row.operation_type_id,
+                sequence_num=row.sequence_num,
+                job_id=row.job_id,
+            )
+
+            # assigned_resourceの格納
+            for assigned_resource in operation_assigned_resources_df.loc[
+                operation_assigned_resources_df.operation_id
+                == operation_info.operation_id
+            ].itertuples():
+                operation_info.assigned_resource_ids[assigned_resource.resource_id] = (
+                    assigned_resource.amount
+                )
+
+            operation_infos.append(operation_info)
+
+        return operation_infos
 
     def _read_resources_df(self):
         resources_csv_path = os.path.join(
@@ -156,11 +181,18 @@ class ScheduleRepository:
         )
         return job_required_resource_groups_df
 
-    def _read_job_assigned_resources_df(self):
-        job_assigned_resources_csv_path = os.path.join(
-            self.repository_dir, self.JOB_ASSIGNED_RESOURCES_CSV_FILE_NAME
+    def _read_operation_assigned_resources_df(self):
+        operation_assigned_resources_csv_path = os.path.join(
+            self.repository_dir, self.OPERATION_ASSIGNED_RESOURCES_CSV_FILE_NAME
         )
-        job_assigned_resources_df = pd.read_csv(
-            job_assigned_resources_csv_path, encoding="utf-8"
+        operatioin_assigned_resources_df = pd.read_csv(
+            operation_assigned_resources_csv_path, encoding="utf-8"
         )
-        return job_assigned_resources_df
+        return operatioin_assigned_resources_df
+
+    def _read_operations_df(self):
+        operations_csv_path = os.path.join(
+            self.repository_dir, self.OPERATIONS_CSV_FILE_NAME
+        )
+        operations_df = pd.read_csv(operations_csv_path, encoding="utf-8")
+        return operations_df
