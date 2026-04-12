@@ -23,9 +23,9 @@ class Job:
     # --- オプションフィールド（デフォルト値あり） ---
     need_time_buckets: int = 0
     start_time_bucket_id: Optional[int] = None
-    parent: Optional["Job"] = None  # 親job
 
     # --- リストフィールド （初期化時は空）---
+    parents: List["Job"] = field(default_factory=list, init=False)  # 親job
     children: List["Job"] = field(default_factory=list, init=False)  # 子job
     predecessors: List["Job"] = field(default_factory=list, init=False)  # 前job
     successors: List["Job"] = field(default_factory=list, init=False)  # 後job
@@ -46,13 +46,3 @@ class Job:
                 for child in self.children
             ],
         )
-
-    def get_prev_jobs_matrix(self):
-        n_tasks = len(self.children)
-        task_ids = [task.task_id for task in self.children]
-        prev_tasks_matrix = np.zeros((n_tasks, n_tasks), dtype=bool)
-        for task_idx, task in enumerate(self.children):
-            for prev_task_id in task.prev_job_task_ids:
-                prev_task_idx = task_ids.index(prev_task_id)
-                prev_tasks_matrix[task_idx, prev_task_idx] = 1
-        return prev_tasks_matrix

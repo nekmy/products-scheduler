@@ -18,11 +18,14 @@ class Scheduler:
     """
 
     def __init__(self):
-        self.root_job = Job(job_id=0, name="root")
         self._resource_groups: dict[int, ResourceGroup] = {}
         self._resources: dict[int, Resource] = {}
-        self._jobs: dict[int, Job] = {0: self.root_job}
+        self._jobs: dict[int, Job] = {}
         self._operations: dict[int, Operation] = {}
+
+        # root_jobの格納
+        self.root_job = Job(job_id=0, name="root")
+        self._jobs[0] = self.root_job
 
     @property
     def n_jobs(self):
