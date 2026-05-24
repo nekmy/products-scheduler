@@ -32,17 +32,7 @@ class Job:
     required_resource_groups: Dict[ResourceGroup, int] = field(
         default_factory=dict, init=False
     )
-    operations: List[Operation] = field(default_factory=list, init=False)
+    operations: List[Operation] = field(default_factory=list, init=False)  # 順序を持つ
 
     def __repr__(self):
         return self.name
-
-    @property
-    def total_need_time_buckets(self):
-        return max(
-            self.need_time_buckets,
-            *[
-                child.start_time_bucket_id + child.total_need_time_buckets
-                for child in self.children
-            ],
-        )

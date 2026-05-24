@@ -18,10 +18,12 @@ class Scheduler:
     """
 
     def __init__(self):
-        self._resource_groups: dict[int, ResourceGroup] = {}
-        self._resources: dict[int, Resource] = {}
-        self._jobs: dict[int, Job] = {}
-        self._operations: dict[int, Operation] = {}
+        self._resource_groups: dict[int, ResourceGroup] = (
+            {}
+        )  # resource_group_id: ResourceGroup
+        self._resources: dict[int, Resource] = {}  # redource_id: Resource
+        self._jobs: dict[int, Job] = {}  # job_id: Job
+        self._operations: dict[int, Operation] = {}  # operation_id: Operation
 
         # root_jobの格納
         self.root_job = Job(job_id=0, name="root")
@@ -126,7 +128,7 @@ class Scheduler:
                 operation_id=operation_info.operation_id,
                 name=operation_info.name,
                 job=job,
-                sequence_num=operation_info.sequence_num,
+                sequence_index=operation_info.sequence_num,
             )
             # assigned_resource
             for (

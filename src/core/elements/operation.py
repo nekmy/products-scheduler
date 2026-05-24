@@ -18,20 +18,17 @@ class Operation:
     # --- 必須フィールド ---
     operation_id: int
     name: str
-    sequence_num: int
+    # 自身が所属するJob
+    job: Job
+    # job内で何番目のoperationか
+    sequence_index: int
 
     # --- オプションフィールド（デフォルト値あり） ---
-    # 自身が所属するJob
-    job: Optional[Job] = None
-    # 自身が所属する親operation（自身の所属するjobの親jobのoperationのいずれか）
+    # 自身が所属する親operation（自身の所属するjobの親jobのoperationのいずれか）jobがroot以外のoperationでは必須
     parent: Optional["Operation"] = None
 
     # --- リストフィールド（初期化時は空）---
     # 子jobのoperationのうち自身に所属するもの
     children: List["Operation"] = field(default_factory=list, init=False)
-    # jobに属さないoperation特有の開始operation
-    setup_operations: List["Operation"] = field(default_factory=list, init=False)
-    # jobに属さないoperation特有の終了operation
-    teardown_operations: List["Operation"] = field(default_factory=list, init=False)
     # 割り当てられたリソース
     assigned_resources: Dict[Resource, int] = field(default_factory=dict, init=False)

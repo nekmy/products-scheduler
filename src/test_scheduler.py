@@ -14,7 +14,6 @@ def get_test_scheduler_1():
     tasks_1.append(task_1_1)
     tasks_1.append(task_1_2)
     job_1 = Job(tasks=tasks_1, prev_job_ids=[])
-    print(job_1.total_need_time_buckets)
     scheduler.load_jobs(job_1)
     return scheduler
 
@@ -27,7 +26,6 @@ def get_test_scheduler_2():
     jobs: list[Job] = repository._read_jobs()
     for job in jobs:
         scheduler.load_jobs(job)
-        print(job.total_need_time_buckets)
     return scheduler
 
 
