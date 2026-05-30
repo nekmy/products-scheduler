@@ -70,3 +70,26 @@ class Operation(Base):
     child_operations: Mapped[list["Operation"]] = relationship(
         "Operation", back_populates="parent_operation"
     )
+
+
+class JobOrderConstraint(Base):
+    __tablename__ = "job_order_constraint"
+    job_order_constraint_id: Mapped[int] = mapped_column(
+        Integer, autoincrement=True, nullable=False
+    )
+    job_id: Mapped[int] = mapped_column(
+        ForeignKey(Job.job_id, ondelete="CASCADE"), nullable=False
+    )
+    prev_job_id: Mapped[int] = mapped_column(
+        ForeignKey(Job.job_id, ondelete="CASCADE"), nullable=False
+    )
+    __table_args__ = (
+        PrimaryKeyConstraint(job_order_constraint_id, name="job_order_constraint_pk"),
+        UniqueConstraint(job_id, prev_job_id, name="job_order_constraint_uk"),
+    )
+    jobs: Mapped[list[Job]] = relationship(
+        foreign_keys=job_id, back_populates="job_order_constraints"
+    )
+    prev_jobs: Mapped[list[Job]] = relationship(
+        foreign_keys=prev_job_id, back_populates="job_order_constraints"
+    )
