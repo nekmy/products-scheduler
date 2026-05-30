@@ -1,4 +1,5 @@
 venv/
 gemini/
 __pycache__/
+datas/
 *.py[cod]
