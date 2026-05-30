@@ -72,8 +72,31 @@ class Operation(Base):
     )
 
 
+class JobComposition(Base):
+    __tablename__ = "job_compositions"
+    job_composition_id: Mapped[int] = mapped_column(
+        Integer, autoincrement=True, nullable=False
+    )
+    job_id: Mapped[int] = mapped_column(
+        ForeignKey(Job.job_id, ondelete="CASCADE"), nullable=False
+    )
+    child_job_id: Mapped[int] = mapped_column(
+        ForeignKey(Job.job_id, ondelete="CASCADE"), nullable=False
+    )
+    __table_args__ = (
+        PrimaryKeyConstraint(job_composition_id, name="job_composition_pk"),
+        UniqueConstraint(job_id, child_job_id, name="job_composition_uk"),
+    )
+    jobs: Mapped[list[Job]] = relationship(
+        foreign_keys=job_id, back_populates="job_compositions"
+    )
+    child_jobs: Mapped[list[Job]] = relationship(
+        foreign_keys=child_job_id, back_populates="job_compositions"
+    )
+
+
 class JobOrderConstraint(Base):
-    __tablename__ = "job_order_constraint"
+    __tablename__ = "job_order_constraints"
     job_order_constraint_id: Mapped[int] = mapped_column(
         Integer, autoincrement=True, nullable=False
     )
