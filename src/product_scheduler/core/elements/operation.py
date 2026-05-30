@@ -4,8 +4,8 @@ from typing import List, Dict, Optional, TYPE_CHECKING
 from dataclasses import dataclass, field
 
 if TYPE_CHECKING:
-    from product_scheduler.core.elements.job import Job
-    from product_scheduler.core.elements.resource import Resource
+    from .job import Job
+    from .resource import Resource
 
 
 @dataclass
