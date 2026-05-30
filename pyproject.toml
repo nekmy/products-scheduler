@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "product_scheduler"
+"version" = "0.0.0"
+authors = [
+    {name="Ken Asami", email="ken@teikoku-keisanki.com"}
+]
+description = "product schedule library"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = ["numpy", "pandas", "sqlalchemy", "PySide6"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/product_scheduler"]
+# [tool.hatch.build.targets.wheel.sources]
+# "src/product_scheduler" = "scheduler"

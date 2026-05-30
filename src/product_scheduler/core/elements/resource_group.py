@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, List, Any
 
 if TYPE_CHECKING:
-    from core.elements.resource import Resource
+    from product_scheduler.core.elements.resource import Resource
 
 
 @dataclass

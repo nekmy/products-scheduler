@@ -1,14 +1,14 @@
 from typing import Optional, List
 
-from utils.errors.data_integrity_error import DataIntegrityError
-from core.elements.resource_group import ResourceGroup
-from core.elements.resource import Resource
-from core.elements.job import Job
-from core.elements.operation import Operation
-from core.dto.resource_group_info import ResourceGroupInfo
-from core.dto.resource_info import ResourceInfo
-from core.dto.job_info import JobInfo
-from core.dto.operation_info import OperationInfo
+from product_scheduler.utils.errors.data_integrity_error import DataIntegrityError
+from product_scheduler.core.elements.resource_group import ResourceGroup
+from product_scheduler.core.elements.resource import Resource
+from product_scheduler.core.elements.job import Job
+from product_scheduler.core.elements.operation import Operation
+from product_scheduler.core.dto.resource_group_info import ResourceGroupInfo
+from product_scheduler.core.dto.resource_info import ResourceInfo
+from product_scheduler.core.dto.job_info import JobInfo
+from product_scheduler.core.dto.operation_info import OperationInfo
 
 
 class Scheduler:

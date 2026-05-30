@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, List, Dict, Optional
 import numpy as np
 
 if TYPE_CHECKING:
-    from core.elements.resource_group import ResourceGroup
-    from core.elements.operation import Operation
+    from product_scheduler.core.elements.resource_group import ResourceGroup
+    from product_scheduler.core.elements.operation import Operation
 
 
 @dataclass

@@ -3,12 +3,12 @@ from typing import List
 
 import pandas as pd
 
-from utils.errors.data_integrity_error import DataIntegrityError
-from core.scheduler import Scheduler
-from core.dto.resource_info import ResourceInfo
-from core.dto.resource_group_info import ResourceGroupInfo
-from core.dto.job_info import JobInfo
-from core.dto.operation_info import OperationInfo
+from product_scheduler.utils.errors.data_integrity_error import DataIntegrityError
+from product_scheduler.core.scheduler import Scheduler
+from product_scheduler.core.dto.resource_info import ResourceInfo
+from product_scheduler.core.dto.resource_group_info import ResourceGroupInfo
+from product_scheduler.core.dto.job_info import JobInfo
+from product_scheduler.core.dto.operation_info import OperationInfo
 
 
 class ScheduleRepository:

@@ -1,8 +1,8 @@
 from tkinter.filedialog import askdirectory
 
-from core.scheduler import Scheduler
-from core.interfaces.schedule_repository import SchedulRepository
-from core.elements.job import Job
+from product_scheduler.core.scheduler import Scheduler
+from product_scheduler.core.interfaces.schedule_repository import SchedulRepository
+from product_scheduler.core.elements.job import Job
 from core.elements.task import Task
 
 

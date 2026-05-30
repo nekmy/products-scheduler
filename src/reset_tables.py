@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from database.sqlalchemy.models import Base
+from product_scheduler.database.sqlalchemy.models import Base
 
 
 def init_database():

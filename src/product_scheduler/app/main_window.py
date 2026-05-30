@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 
-from app.widgets.gantt_widget import GanttWidget
-from core.scheduler import Scheduler
-from core.interfaces.schedule_repository import ScheduleRepository
+from product_scheduler.app.widgets.gantt_widget import GanttWidget
+from product_scheduler.core.scheduler import Scheduler
+from product_scheduler.core.interfaces.schedule_repository import ScheduleRepository
 
 
 class MainWindow(QMainWindow):

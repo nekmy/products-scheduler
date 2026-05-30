@@ -6,9 +6,9 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QPainter, QColor, QPen
 
-from core.elements.job import Job
-from core.scheduler import Scheduler
-from app.widgets.job_rect_item import JobRectItem
+from product_scheduler.core.elements.job import Job
+from product_scheduler.core.scheduler import Scheduler
+from product_scheduler.app.widgets.job_rect_item import JobRectItem
 
 
 class GanttScene(QGraphicsScene):
