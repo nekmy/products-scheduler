@@ -14,8 +14,9 @@ from product_scheduler.database.base_schedule_repository import BaseScheduleRepo
 
 
 class CSVScheduleRepository(BaseScheduleRepository):
-    RESOURCE_GROUPS_CSV_FILE_NAME = ""
-    RESOURCES_CSV_FILE_NAME = ""
+    RESOURCES_CSV_FILE_NAME = "resources.csv"
+    RESOURCE_GROUPS_CSV_FILE_NAME = "resource_groups.csv"
+    RESOURCE_GROUP_MEMBERS_CSV_FILE_NAME = "resource_group_members.csv"
     JOBS_CSV_FILE_NAME = "jobs.csv"
     JOB_COMPOSITIONS_CSV_FILE_NAME = "job_compositions.csv"
     JOB_ORDER_CONSTRAINTS_CSV_FILE_NAME = "job_order_constraints.csv"
@@ -24,34 +25,33 @@ class CSVScheduleRepository(BaseScheduleRepository):
     def __init__(self, csv_file_dir):
         self.csv_file_dir = csv_file_dir
 
-    def _load_resource_group_infos(self) -> list[ResourceGroupInfo]:
-        # resource_groups_df = self._read_resource_groups_df()
-        # resource_group_members_df = self._read_resource_group_members_df()
-        # resource_group_infos: list[ResourceGroupInfo] = []
-
-        # for row in resource_groups_df.itertuples():
-        #     resource_group_info = ResourceGroupInfo(
-        #         resource_group_id=row.resource_group_id, name=row.name
-        #     )
-        #     for resource_id in resource_group_members_df.loc[
-        #         resource_group_members_df.resource_group_id == row.resource_group_id
-        #     ].resource_id:
-        #         resource_group_info.resource_ids.append(resource_id)
-        #     resource_group_infos.append(resource_group_info)
-
-        # return resource_group_infos
-        return []
-
     def _load_resource_infos(self) -> list[ResourceInfo]:
-        # resource_infos: list[ResourceInfo] = []
-        # resources_df = self._read_resources_df()
-        # for row in resources_df.itertuples():
-        #     resource_info = ResourceInfo(
-        #         resource_id=row.resource_id, name=row.name, capacity=row.capacity
-        #     )
-        #     resource_infos.append(resource_info)
-        # return resource_infos
-        return []
+        resource_infos: list[ResourceInfo] = []
+        resources_df = self._read_resources_df()
+
+        for row in resources_df.itertuples():
+            resource_info = ResourceInfo(
+                resource_id=row.resource_id, name=row.name, capacity=row.capacity
+            )
+            resource_infos.append(resource_info)
+        return resource_infos
+
+    def _load_resource_group_infos(self) -> list[ResourceGroupInfo]:
+        resource_groups_df = self._read_resource_groups_df()
+        resource_group_members_df = self._read_resource_group_members_df()
+        resource_group_infos: list[ResourceGroupInfo] = []
+
+        for row in resource_groups_df.itertuples():
+            resource_group_info = ResourceGroupInfo(
+                resource_group_id=row.resource_group_id, name=row.name
+            )
+            for resource_id in resource_group_members_df.loc[
+                resource_group_members_df.resource_group_id == row.resource_group_id
+            ].resource_id:
+                resource_group_info.resource_ids.append(resource_id)
+            resource_group_infos.append(resource_group_info)
+
+        return resource_group_infos
 
     def _load_job_infos(self) -> list[JobInfo]:
         jobs_df = self._read_jobs_df()
@@ -122,21 +122,21 @@ class CSVScheduleRepository(BaseScheduleRepository):
 
     def _read_resources_df(self):
         resources_csv_path = os.path.join(
-            self.repository_dir, self.RESOURCES_CSV_FILE_NAME
+            self.csv_file_dir, self.RESOURCES_CSV_FILE_NAME
         )
         resources_df = pd.read_csv(resources_csv_path, encoding="utf-8")
         return resources_df
 
     def _read_resource_groups_df(self):
         resource_groups_csv_path = os.path.join(
-            self.repository_dir, self.RESOURCE_GROUPS_CSV_FILE_NAME
+            self.csv_file_dir, self.RESOURCE_GROUPS_CSV_FILE_NAME
         )
         resource_groups_df = pd.read_csv(resource_groups_csv_path, encoding="utf-8")
         return resource_groups_df
 
     def _read_resource_group_members_df(self):
         resource_group_members_csv_path = os.path.join(
-            self.repository_dir, self.RESOURCE_GROUP_MEMBERS_CSV_FILE_NAME
+            self.csv_file_dir, self.RESOURCE_GROUP_MEMBERS_CSV_FILE_NAME
         )
         resource_group_members_df = pd.read_csv(
             resource_group_members_csv_path, encoding="utf-8"

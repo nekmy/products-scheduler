@@ -17,8 +17,8 @@ class BaseScheduleRepository(ABC):
     def fetch_all_data(self) -> ScheduleInfo:
 
         # 各infosを取得する
-        resource_group_infos = self._load_resource_group_infos()
         resource_infos = self._load_resource_infos()
+        resource_group_infos = self._load_resource_group_infos()
         job_infos = self._load_job_infos()
         operation_infos = self._load_operation_infos()
 

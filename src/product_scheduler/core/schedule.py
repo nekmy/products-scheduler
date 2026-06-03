@@ -28,8 +28,8 @@ class Schedule:
     @classmethod
     def from_info(cls, schedule_info: ScheduleInfo):
         schedule = cls()
-        schedule._load_resource_groups(schedule_info.resource_group_infos)
         schedule._load_resources(schedule_info.resource_infos)
+        schedule._load_resource_groups(schedule_info.resource_group_infos)
         schedule._load_jobs(schedule_info.job_infos)
         schedule._load_operations(schedule_info.operation_infos)
         return schedule
