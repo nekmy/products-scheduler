@@ -27,7 +27,7 @@ class Job:
     children: List["Job"] = field(default_factory=list, init=False)  # 子job
     predecessors: List["Job"] = field(default_factory=list, init=False)  # 前job
     successors: List["Job"] = field(default_factory=list, init=False)  # 後job
-    required_amount_of_resource_groups: Dict[ResourceGroup, int] = field(
+    required_resource_groups: Dict[ResourceGroup, int] = field(
         default_factory=dict, init=False
     )
     operations: List[Operation] = field(default_factory=list, init=False)  # 順序を持つ

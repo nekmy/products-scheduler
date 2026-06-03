@@ -14,6 +14,4 @@ class OperationInfo:
     job_id: Optional[int] = None
 
     # --- リストフィールド（初期化時は空） ---
-    assigned_amount_of_resource_ids: Dict[int, int] = field(
-        default_factory=dict, init=False
-    )
+    assigned_resources: Dict[int, int] = field(default_factory=dict, init=False)
