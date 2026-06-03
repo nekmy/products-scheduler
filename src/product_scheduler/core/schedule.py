@@ -1,6 +1,7 @@
 from typing import Optional, List
 
 from product_scheduler.core.dto.schedule_info import ScheduleInfo
+from product_scheduler.core.elements.enums import JobType
 from product_scheduler.utils.errors import DataIntegrityError
 from .elements import Job, Operation, ResourceGroup, Resource
 from .dto import JobInfo, OperationInfo, ResourceGroupInfo, ResourceInfo
@@ -21,7 +22,7 @@ class Schedule:
         self._operations: dict[int, Operation] = {}  # operation_id: Operation
 
         # root_jobの格納
-        self.root_job = Job(job_id=0, name="root")
+        self.root_job = Job(job_id=0, name="root", job_type=JobType.ROOT)
         self._jobs[0] = self.root_job
 
     @classmethod
@@ -84,8 +85,7 @@ class Schedule:
         # Jobのインスタンス化
         for job_info in job_infos:
             job = Job(
-                job_id=job_info.job_id,
-                name=job_info.name,
+                job_id=job_info.job_id, name=job_info.name, job_type=job_info.job_type
             )
             # required_resource_group
             for (
@@ -96,7 +96,7 @@ class Schedule:
                     required_resource_group_id
                 ]
                 job.required_resource_groups[required_resource_group] = amount
-            self._jobs[job_info.job_id] = job
+            self.add_job(job_info.job_id, job)
 
         # 親子関係の反映
         for job_info in job_infos:
@@ -151,6 +151,14 @@ class Schedule:
             parent_operation.children.append(operation)
 
         return None
+
+    def add_job(self, job_id: int, job: Job):
+        self._jobs[job_id] = job
+
+        # project_jobならroot_jobを親にする.
+        if job.job_type == JobType.PROJECT:
+            self.root_job.children.append(job)
+            job.parents.append(self.root_job)
 
     def create_job(self, name, parent_job: Job):
         if self._jobs:

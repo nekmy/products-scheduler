@@ -2,6 +2,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, List, Dict, Optional
 
+from product_scheduler.core.elements.enums import JobType
+
 if TYPE_CHECKING:
     from .resource_group import ResourceGroup
     from .operation import Operation
@@ -18,6 +20,7 @@ class Job:
     # --- 必須フィールド ---
     job_id: int
     name: str
+    job_type: JobType
 
     # --- リストフィールド （初期化時は空）---
     parents: List["Job"] = field(default_factory=list, init=False)  # 親job

@@ -8,6 +8,7 @@ from product_scheduler.core.dto import (
     JobInfo,
     OperationInfo,
 )
+from product_scheduler.core.elements.enums import JobType
 from product_scheduler.utils.errors import DataIntegrityError
 from product_scheduler.database.base_schedule_repository import BaseScheduleRepository
 
@@ -63,8 +64,7 @@ class CSVScheduleRepository(BaseScheduleRepository):
 
         for row in jobs_df.itertuples():
             job_info = JobInfo(
-                job_id=row.job_id,
-                name=row.job_name,
+                job_id=row.job_id, name=row.job_name, job_type=JobType[row.job_type]
             )
 
             # 子jobの格納
