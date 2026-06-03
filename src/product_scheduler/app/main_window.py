@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 
 from product_scheduler.app.widgets.gantt_widget import GanttWidget
-from product_scheduler.core.scheduler import Scheduler
-from product_scheduler.core.interfaces.schedule_repository import ScheduleRepository
+from product_scheduler.core.schedule import Schedule
+from product_scheduler.core.interfaces.schedule_factory import ScheduleFactory
 
 
 class MainWindow(QMainWindow):
@@ -12,10 +12,10 @@ class MainWindow(QMainWindow):
         self.resize(800, 600)
         main_widget = QWidget()
         main_layout = QHBoxLayout()
-        self.repository = ScheduleRepository(
+        self.repository = ScheduleFactory(
             repository_dir="..\\datas\\datas_sample_20260103_00"
         )
-        self.scheduler = self.repository.read_scheduler()
+        self.scheduler = self.repository.build()
 
         gantt_widget = GanttWidget(self.scheduler)
         main_layout.addWidget(gantt_widget)

@@ -8,8 +8,7 @@ class OperationInfo:
     operation_id: int
     name: str
     parent_id: int
-    operation_type_id: int
-    sequence_num: int  # job内の実施順序
+    sequence_index: int  # job内の実施順序
 
     # --- オプションフィールド（デフォルト値あり） ---
     job_id: Optional[int] = None

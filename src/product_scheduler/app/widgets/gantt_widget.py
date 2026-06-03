@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QPainter, QColor, QPen
 
 from product_scheduler.core.elements.job import Job
-from product_scheduler.core.scheduler import Scheduler
+from product_scheduler.core.schedule import Schedule
 from product_scheduler.app.widgets.job_rect_item import JobRectItem
 
 
@@ -74,7 +74,7 @@ class GanttWidget(QWidget):
     LINE_HEIGHT = 100
     JOB_RECT_HEIGHT = 50
 
-    def __init__(self, scheduler: Scheduler):
+    def __init__(self, scheduler: Schedule):
         super().__init__()
         self.scheduler = scheduler
         self.gantt_scene = GanttScene(

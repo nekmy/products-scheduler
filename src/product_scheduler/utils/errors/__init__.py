@@ -1,1 +1,1 @@
-from data_integrity_error import DataIntegrityError
+from .data_integrity_error import DataIntegrityError

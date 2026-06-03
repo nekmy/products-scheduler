@@ -1,6 +1,5 @@
 import os
 from typing import List
-from abc import ABC, abstractmethod
 
 import pandas as pd
 
@@ -14,10 +13,12 @@ from product_scheduler.core.dto.element_infos.job_info import JobInfo
 from product_scheduler.core.dto.element_infos.operation_info import OperationInfo
 
 
-class AbstractScheduleRepository(ABC):
+class ScheduleFactory:
 
-    @abstractmethod
-    def read_scheduler(self):
+    def __init__(self, repository_dir):
+        self.repository_dir = repository_dir
+
+    def build(self):
         scheduler = Schedule()
 
         resource_infos = self._load_resource_infos()

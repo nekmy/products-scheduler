@@ -1,10 +1,10 @@
-from product_scheduler.core.scheduler import Scheduler
-from product_scheduler.core.interfaces.schedule_repository import ScheduleRepository
+from product_scheduler.core.schedule import Schedule
+from product_scheduler.core.interfaces.schedule_factory import ScheduleFactory
 from product_scheduler.core.elements.job import Job
 
 
 def get_test_scheduler_1():
-    scheduler = Scheduler()
+    scheduler = Schedule()
     tasks_1 = []
     task_1_1 = Task(need_time_buckets=2, prev_tasks=[], nead_resources={})
     task_1_2 = Task(need_time_buckets=1, prev_tasks=[task_1_1], nead_resources={})
@@ -16,7 +16,7 @@ def get_test_scheduler_1():
 
 
 def get_test_scheduler_2():
-    scheduler = Scheduler()
+    scheduler = Schedule()
     # repository = JobRepository(repository_dir=askdirectory())
     repository = SchedulRepository(repository_dir="..\\datas\\datas_sample_20260103_00")
 

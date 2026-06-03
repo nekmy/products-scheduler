@@ -1,11 +1,12 @@
 from typing import Optional, List
 
+from product_scheduler.core.dto.schedule_info import ScheduleInfo
 from product_scheduler.utils.errors import DataIntegrityError
 from .elements import Job, Operation, ResourceGroup, Resource
 from .dto import JobInfo, OperationInfo, ResourceGroupInfo, ResourceInfo
 
 
-class Scheduler:
+class Schedule:
     """
     Jobを内包するクラス.
     Jobとその開始タイムバケットのみを保持する.
@@ -23,6 +24,15 @@ class Scheduler:
         self.root_job = Job(job_id=0, name="root")
         self._jobs[0] = self.root_job
 
+    @classmethod
+    def from_info(cls, schedule_info: ScheduleInfo):
+        schedule = cls()
+        schedule._load_resource_groups(schedule_info.resource_group_infos)
+        schedule._load_resources(schedule_info.resource_infos)
+        schedule._load_jobs(schedule_info.job_infos)
+        schedule._load_operations(schedule_info.operation_infos)
+        return schedule
+
     @property
     def n_jobs(self):
         return len(self._jobs)
@@ -31,7 +41,7 @@ class Scheduler:
     def n_resources(self):
         return len(self._resources)
 
-    def add_resources(self, resource_infos: List[ResourceInfo]):
+    def _load_resources(self, resource_infos: List[ResourceInfo]):
         for resource_info in resource_infos:
             # 既にこのidが使用されている場合はエラー
             if resource_info.resource_id in self._resources:
@@ -44,7 +54,7 @@ class Scheduler:
             self._resources[resource_info.resource_id] = resource
         return None
 
-    def add_resource_groups(self, resource_group_infos: List[ResourceGroupInfo]):
+    def _load_resource_groups(self, resource_group_infos: List[ResourceGroupInfo]):
         """
         resource_kindをインスタンス化して格納する.
         """
@@ -70,13 +80,12 @@ class Scheduler:
             )
         return None
 
-    def add_jobs(self, job_infos: List[JobInfo]):
+    def _load_jobs(self, job_infos: List[JobInfo]):
         # Jobのインスタンス化
         for job_info in job_infos:
             job = Job(
                 job_id=job_info.job_id,
                 name=job_info.name,
-                need_time_buckets=job_info.need_time_buckets,
             )
             # required_resource_group
             for (
@@ -93,12 +102,13 @@ class Scheduler:
         for job_info in job_infos:
             if job_info.job_id not in self._jobs:
                 raise DataIntegrityError()
-            if job_info.parent_job_id not in self._jobs:
-                raise DataIntegrityError()
-            job = self._jobs[job_info.job_id]
-            parent_job = self._jobs[job_info.parent_job_id]
-            job.parent = parent_job
-            parent_job.children.append(job)
+            for child_job_id in job_info.child_job_ids:
+                if child_job_id not in self._jobs:
+                    raise DataIntegrityError()
+                job = self._jobs[job_info.job_id]
+                child_job = self._jobs[child_job_id]
+                job.children.append(child_job)
+                child_job.parents.append(job)
 
         # 前後関係の反映
         for job_info in job_infos:
@@ -114,7 +124,7 @@ class Scheduler:
 
         return None
 
-    def add_operations(self, operation_infos: List[OperationInfo]):
+    def _load_operations(self, operation_infos: List[OperationInfo]):
         for operation_info in operation_infos:
             operation_id = operation_info.operation_id
             job = self._jobs[operation_info.job_id]
@@ -122,7 +132,7 @@ class Scheduler:
                 operation_id=operation_info.operation_id,
                 name=operation_info.name,
                 job=job,
-                sequence_index=operation_info.sequence_num,
+                sequence_index=operation_info.sequence_index,
             )
             # assigned_resource
             for (
