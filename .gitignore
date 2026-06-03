@@ -1,5 +1,9 @@
-venv/
-gemini/
-__pycache__/
-datas/
-*.py[cod]
+*
+!*/
+!.gitignore
+!/*.py
+!src/**/*.py
+!datas/csv/**/*.csv
+!/LICENSE
+!/pyproject.toml
+!/README.md
