@@ -14,13 +14,19 @@ from product_scheduler.database.base_schedule_repository import BaseScheduleRepo
 
 
 class CSVScheduleRepository(BaseScheduleRepository):
+    # resource_data
     RESOURCES_CSV_FILE_NAME = "resources.csv"
+    # resource_group_data
     RESOURCE_GROUPS_CSV_FILE_NAME = "resource_groups.csv"
     RESOURCE_GROUP_MEMBERS_CSV_FILE_NAME = "resource_group_members.csv"
+    # job_data
     JOBS_CSV_FILE_NAME = "jobs.csv"
     JOB_COMPOSITIONS_CSV_FILE_NAME = "job_compositions.csv"
     JOB_ORDER_CONSTRAINTS_CSV_FILE_NAME = "job_order_constraints.csv"
+    JOB_REQUIRED_RESOURCE_GROUPS_CSV_FILE_NAME = "job_required_resource_groups.csv"
+    # operation_data
     OPERATIONS_CSV_FILE_NAME = "operations.csv"
+    OPERATION_ASSIGNED_RESOURCES_CSV_FILE_NAME = "operation_assigned_resources.csv"
 
     def __init__(self, csv_file_dir):
         self.csv_file_dir = csv_file_dir
@@ -57,8 +63,7 @@ class CSVScheduleRepository(BaseScheduleRepository):
         jobs_df = self._read_jobs_df()
         job_compositions_df = self._read_job_compositions_df()
         job_order_constraints_df = self._read_job_order_constraints_df()
-        # job_required_resource_groups_df = self._read_job_required_resource_groups_df()
-        # operation_assigned_resources_df = self._read_operation_assigned_resources_df()
+        job_required_resource_groups_df = self._read_job_required_resource_groups_df()
 
         job_infos: list[JobInfo] = []
 
@@ -82,12 +87,12 @@ class CSVScheduleRepository(BaseScheduleRepository):
                 job_info.predecessor_job_ids.append(prev_job_id)
 
             # required_resource_groupの格納
-            # for required_resource_group in job_required_resource_groups_df.loc[
-            #     job_required_resource_groups_df.job_id == job_info.job_id
-            # ].itertuples():
-            #     job_info.required_resource_group_ids[
-            #         required_resource_group.resource_group_id
-            #     ] = required_resource_group.amount
+            for required_resource_group in job_required_resource_groups_df.loc[
+                job_required_resource_groups_df.job_id == job_info.job_id
+            ].itertuples():
+                job_info.required_resource_groups[
+                    required_resource_group.resource_group_id
+                ] = required_resource_group.amount
 
             job_infos.append(job_info)
 
@@ -95,7 +100,7 @@ class CSVScheduleRepository(BaseScheduleRepository):
 
     def _load_operation_infos(self) -> list[OperationInfo]:
         operations_df = self._read_operations_df()
-        # operation_assigned_resources_df = self._read_operation_assigned_resources_df()
+        operation_assigned_resources_df = self._read_operation_assigned_resources_df()
         operation_infos: list[OperationInfo] = []
 
         for row in operations_df.itertuples():
@@ -108,13 +113,13 @@ class CSVScheduleRepository(BaseScheduleRepository):
             )
 
             # assigned_resourceの格納
-            # for assigned_resource in operation_assigned_resources_df.loc[
-            #     operation_assigned_resources_df.operation_id
-            #     == operation_info.operation_id
-            # ].itertuples():
-            #     operation_info.assigned_resource_ids[assigned_resource.resource_id] = (
-            #         assigned_resource.amount
-            #     )
+            for assigned_resource in operation_assigned_resources_df.loc[
+                operation_assigned_resources_df.operation_id
+                == operation_info.operation_id
+            ].itertuples():
+                operation_info.assigned_resources[assigned_resource.resource_id] = (
+                    assigned_resource.amount
+                )
 
             operation_infos.append(operation_info)
 
@@ -170,7 +175,7 @@ class CSVScheduleRepository(BaseScheduleRepository):
 
     def _read_job_required_resource_groups_df(self):
         job_required_resource_groups_csv_path = os.path.join(
-            self.repository_dir, self.JOB_REQUIRED_RESOURCE_GROUPS_CSV_FILE_NAME
+            self.csv_file_dir, self.JOB_REQUIRED_RESOURCE_GROUPS_CSV_FILE_NAME
         )
         job_required_resource_groups_df = pd.read_csv(
             job_required_resource_groups_csv_path, encoding="utf-8"
@@ -179,7 +184,7 @@ class CSVScheduleRepository(BaseScheduleRepository):
 
     def _read_operation_assigned_resources_df(self):
         operation_assigned_resources_csv_path = os.path.join(
-            self.repository_dir, self.OPERATION_ASSIGNED_RESOURCES_CSV_FILE_NAME
+            self.csv_file_dir, self.OPERATION_ASSIGNED_RESOURCES_CSV_FILE_NAME
         )
         operatioin_assigned_resources_df = pd.read_csv(
             operation_assigned_resources_csv_path, encoding="utf-8"
