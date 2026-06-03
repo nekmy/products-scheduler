@@ -91,11 +91,11 @@ class Schedule:
             for (
                 required_resource_group_id,
                 amount,
-            ) in job_info.required_resource_group_ids.items():
+            ) in job_info.required_amount_of_resource_group_ids.items():
                 required_resource_group = self._resource_groups[
                     required_resource_group_id
                 ]
-                job.required_resource_groups[required_resource_group] = amount
+                job.required_amount_of_resource_groups[required_resource_group] = amount
             self.add_job(job_info.job_id, job)
 
         # 親子関係の反映
@@ -138,9 +138,9 @@ class Schedule:
             for (
                 assigned_resource_id,
                 amount,
-            ) in operation_info.assigned_resource_ids.items():
+            ) in operation_info.assigned_amount_of_resource_ids.items():
                 assigned_resource = self._resources[assigned_resource_id]
-                operation.assigned_resources[assigned_resource] = amount
+                operation.assigned_amount_of_resources[assigned_resource] = amount
             self._operations[operation_id] = operation
             job.operations.append(operation)
         # 親子関係の反映

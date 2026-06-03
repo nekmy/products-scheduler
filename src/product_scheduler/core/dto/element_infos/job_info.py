@@ -14,6 +14,6 @@ class JobInfo:
     # --- リストフィールド （初期化時は空）---
     child_job_ids: list[int] = field(default_factory=list, init=False)  # 親job
     predecessor_job_ids: list[int] = field(default_factory=list, init=False)  # 後job
-    required_resource_group_ids: dict[int, int] = field(
+    required_amount_of_resource_group_ids: dict[int, int] = field(
         default_factory=dict, init=False
     )

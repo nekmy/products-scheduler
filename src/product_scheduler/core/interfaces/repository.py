@@ -87,7 +87,7 @@ class AbstractScheduleRepository(ABC):
             for required_resource_group in job_required_resource_groups_df.loc[
                 job_required_resource_groups_df.job_id == job_info.job_id
             ].itertuples():
-                job_info.required_resource_group_ids[
+                job_info.required_amount_of_resource_group_ids[
                     required_resource_group.resource_group_id
                 ] = required_resource_group.amount
 
@@ -115,9 +115,9 @@ class AbstractScheduleRepository(ABC):
                 operation_assigned_resources_df.operation_id
                 == operation_info.operation_id
             ].itertuples():
-                operation_info.assigned_resource_ids[assigned_resource.resource_id] = (
-                    assigned_resource.amount
-                )
+                operation_info.assigned_amount_of_resource_ids[
+                    assigned_resource.resource_id
+                ] = assigned_resource.amount
 
             operation_infos.append(operation_info)
 

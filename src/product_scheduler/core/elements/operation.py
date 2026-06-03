@@ -31,4 +31,6 @@ class Operation:
     # 子jobのoperationのうち自身に所属するもの
     children: List["Operation"] = field(default_factory=list, init=False)
     # 割り当てられたリソース
-    assigned_resources: Dict[Resource, int] = field(default_factory=dict, init=False)
+    assigned_amount_of_resources: Dict[Resource, int] = field(
+        default_factory=dict, init=False
+    )
